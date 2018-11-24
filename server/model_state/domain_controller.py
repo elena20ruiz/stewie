@@ -1,7 +1,11 @@
-import server.stewie.model_training.model_training as mt
-import server.stewie.spotify_api.controller as sc
-import server.stewie.face_analysis as fa
-import server.stewie.ms_api as ms
+import server.model_training.model_training as mt
+import server.spotify.parse as sc
+import server.emotion.emotion_api as emotion
+import numpy as np
+from matplotlib import pyplot as plt
+import cv2
+import time
+
 
 class DomainController:
     Client_ID = 'fc76e2af23f6481b8fee3a103be06bdc'
@@ -16,12 +20,22 @@ class DomainController:
     USER_PLAYLIST_ID = '574wL0I3ntRPvVVyNHriFK'
     TRAINING_PLAYLIST_ID = '1byvBifDJy7tqBrMJQgFZ1'
     playlistID = None
-    playlistEmotion =
+    camera_window_name = "Emotion recognizer"
+    emotionCamera = None
+    cameraWidth = None
+    cameraHeight = None
 
 
-    def __init__(self, token):
-        self.token = token
-        self.getEmotionPredictionModel()
+
+    def __init__(self):
+        #self.getEmotionPredictionModel()
+        cv2.namedWindow(self.camera_window_name)
+        self.emotionCamera = cv2.VideoCapture(0)
+        img = self.get_webcam_image()
+        height, width = img.shape[:2]
+        self.cameraHeight = 300
+        self.cameraWidth = self.cameraHeight * (width/height)
+
 
     def getTrackEmotionPrediction(self, id, model):
         trackJSON = sc.get_info_track(id, self.token)
@@ -46,14 +60,30 @@ class DomainController:
         sc.get_info_tracks(self.TRAINING_PATH + self.TRAINING_FEATURES_JSON, self.token, data)
         json_features_data = mt.getTrackJSONFromPath(self.TRAINING_PATH, self.TRAINING_FEATURES_JSON)
 
+    def processImage(self):
+        img = self.get_webcam_image()
+        img = cv2.resize(img, (int(DC.cameraWidth), int(DC.cameraHeight)))
+        respFace, respEmotion = emotion.get_image_emotion(img)
 
+        self.editImage(img, )
+        self.set_webcam_image(img)
+        cv2.waitKey(1)
 
+    def get_webcam_image(self):
+        s, img = self.emotionCamera.read()
+        return img
 
+    def set_webcam_image(self, img):
+        cv2.imshow(self.camera_window_name, img)
+
+    def destroy_camera(self):
+        cv2.destroyWindow(self.camera_window_name)
 
 
 # user-read-recently-played user-top-read user-follow-read user-follow-modify user-modify-playback-state user-read-playback-state user-read-currently-playing user-library-read user-library-modify user-read-private user-read-birthdate user-read-email playlist-modify-public playlist-read-collaborative playlist-modify-private playlist-read-private streaming app-remote-control
 if __name__ == '__main__':
     DC = DomainController()
-    model = DC.getEmotionPredictionModel()
-    id = '3cfOd4CMv2snFaKAnMdnvK'
-    print(DC.getTrackEmotionPrediction(id, model))
+    #model = DC.getEmotionPredictionModel()
+    while 1:
+        DC.processImage()
+     #print(DC.getTrackEmotionPrediction(id, model))
