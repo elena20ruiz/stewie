@@ -2,3 +2,4 @@ requests
 sklearn
 matplotlib
 opencv-python
+flask
