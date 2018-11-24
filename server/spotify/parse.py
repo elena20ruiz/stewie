@@ -1,7 +1,7 @@
 import json
 from pprint import pprint
 
-from stewie.server.spotify_api import api as spotify
+from server.spotify import calls
 
 
 #TODO: Generate API Call in order to get all user playlists
@@ -10,7 +10,7 @@ def get_playlists(token):
 
 # Return for each track id + name
 def get_playlists_tracks(id_playlist,token):
-    data = spotify.get_tracks_from_playlist_call(id_playlist, token)
+    data = calls.get_tracks_from_playlist_call(id_playlist, token)
     d = json.loads(data)
     result = { 'list' : [] }
     for item in d['items']:
@@ -19,7 +19,7 @@ def get_playlists_tracks(id_playlist,token):
             'name': item['track']['name']
         }
         result['list'].append(track)
-    #with open('server/stewie/spotify_api/songs.json', 'w') as outfile:  
+    #with open('server/stewie/calls_api/songs.json', 'w') as outfile:  
     #   json.dump(result, outfile)
     return result  
 
@@ -33,7 +33,7 @@ def get_info_tracks(path_tracks, token, data):
     for track in data["list"]:
         input_ids += track['id'] + ','
     input_ids = input_ids[:-1]
-    result = spotify.get_track_info_call(input_ids, token)
+    result = calls.get_track_info_call(input_ids, token)
     result_file = {}
     d = json.loads(result)
     for item in d['audio_features']:
@@ -57,7 +57,7 @@ def get_info_tracks(path_tracks, token, data):
 
 # Get info track from list of traks
 def get_info_track(track_id, token):
-    result = spotify.get_track_info_call(track_id, token)
+    result = calls.get_track_info_call(track_id, token)
     result_file = {}
     d = json.loads(result)
     for item in d['audio_features']:
