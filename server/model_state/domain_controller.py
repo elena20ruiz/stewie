@@ -8,7 +8,6 @@ class DomainController:
     Client_Secret = '58a174d9829a4bfcaa3e159c7131e88d'
 
     token = "BQBIFLVNNTMuu9AYDmNKe0OOQHpqB2HYP2aILPBVRwyr9ZQmYcX_rmv3XkFM3vl-S1aa0zKLybEL9XHSp2QwGLoX3s2BWJ8Igh9b9tLCd0qyzVcv4mMw86wRpYF393s-MmIEc60P-7audDvocZMaEJRC_R8"
-
     model = None
     TRAINING_SET_FILE = "TargetTrainingDataSet.txt"
     TRAINING_TARGET_JSON = "TrainingTarget.json"
