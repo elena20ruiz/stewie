@@ -16,7 +16,8 @@ class DomainController:
     TRAINING_PATH = "model_training/"
     USER_PLAYLIST_ID = '574wL0I3ntRPvVVyNHriFK'
     TRAINING_PLAYLIST_ID = '1byvBifDJy7tqBrMJQgFZ1'
-
+    playlistID = None
+    playlistEmotion =
 
 
     def __init__(self, token):
@@ -37,6 +38,14 @@ class DomainController:
 
         training_json = mt.mergeTrackJSONFields(json_features_data, json_target_data)
         self.model = mt.generateTracksRegresionModel(training_json, mt.trackFeatures, mt.emotions)
+
+    def getPlaylistEmotionPrediction(self):
+        playlistID = sc.get_user_playlist(self.token)
+        data = sc.get_playlists_tracks(self.TRAINING_PLAYLIST_ID, self.token)
+        sc.get_info_tracks(self.TRAINING_PATH + self.TRAINING_FEATURES_JSON, self.token, data)
+        json_features_data = mt.getTrackJSONFromPath(self.TRAINING_PATH, self.TRAINING_FEATURES_JSON)
+
+
 
 
 
