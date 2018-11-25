@@ -152,5 +152,22 @@ def connect_to_device(access_token, device):
     print(resp.text)
     return resp.json()
 
-def reorder_playlist(id_playlist, list_tracks, token):
-    url = 'https://api.spotify.com/v1/me/player'
+def reorder_playlist(playlist_id, list_tracks, token):
+    current_position = get_tracks_from_playlist_call(playlist_id,token)
+    #TODO: See how will get list_tracks
+    item = list_tracks[0]
+    pos = 0
+    for original in current_position['items']:
+        if item == original['id']:
+            break
+        else: 
+            pos += 1
+    body = {
+    "range_start": pos,
+    "range_length": 1,
+    "insert_before": 1
+    }
+    url = 'https://api.spotify.com/v1/playlists/'+ playlist_id + '/tracks'
+    headers  = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
+    resp = requests.put(url, headers=headers, data=body)
+    return resp.json()

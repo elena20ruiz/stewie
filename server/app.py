@@ -45,6 +45,13 @@ def connect():
     # REORDER LIST
 
 
+@app.route("/list_playlist")
+def list_playlist():
+    res_playlist = sp_calls.get_current_playlist(session['auth_header'])
+    id_playlist = sp_parse.get_current_playlist_from_info(res_playlist)
+    res_songs = sp_calls.get_tracks_from_playlist_call(id_playlist, session['auth_header'])
+    return jsonify(sp_parse.get_list_songs_orders(res_songs))
+
 @app.route("/callback/")
 def callback():
     auth_token = request.args['code']

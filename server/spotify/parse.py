@@ -89,3 +89,6 @@ def get_current_playlist_from_info(response):
     split_uri = uri.split('/')
     return split_uri[5]
 
+def get_list_songs_orders(response):
+    for track in response['item']:
+        
