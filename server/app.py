@@ -1,10 +1,13 @@
 from server.spotify import calls as sp_calls
 from server.spotify import parse as sp_parse
 from flask import Flask, request, redirect, g, render_template, session, jsonify
+import server.model_state.domain_controller as dc
 import pprint
 
 app = Flask(__name__)
 app.secret_key = 'some key for session'
+
+domainController = None
 
 # ----------------------- AUTH API PROCEDURE -------------------------
 
@@ -21,6 +24,11 @@ def connect():
     # STORE SONGS
     res_songs = sp_calls.get_tracks_from_playlist_call(id_playlist, session['auth_header'])
     res_info_songs = sp_parse.get_info_tracks(res_songs, session['auth_header'])
+
+    domainController = dc.DomainController()
+    domainController.getEmotionPredictionModel()
+    domainController.computePlaylistEmotionPrediction(id_playlist)
+
     return jsonify(res_info_songs)
 
     # GET DEVICE TO CONNECT
