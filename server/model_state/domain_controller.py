@@ -1,11 +1,12 @@
-import server.model_training.model_training as mt
-import server.spotify.parse as sc
-import server.emotion.emotion_api as emotion
-import numpy as np
-from matplotlib import pyplot as plt
-import cv2
 import time
 from collections import OrderedDict
+
+import cv2
+
+import server.emotion.emotion_api as emotion
+import server.model_training.model_training as mt
+import server.spotify.parse as sc
+
 
 class DomainController:
     Client_ID = 'fc76e2af23f6481b8fee3a103be06bdc'
@@ -56,7 +57,7 @@ class DomainController:
         self.model = mt.generateTracksRegresionModel(training_json, mt.trackFeatures, mt.emotions)
 
 
-    def computePlaylistEmotionPrediction(self):
+    def computePlaylistEmotionPrediction(self, playlistID):
         id = sc.get_user_playlistID(self.token)
         if id is None:
             print("User doesn't have an active playlist!")
@@ -94,7 +95,6 @@ class DomainController:
             sim = self.computeSimilarity(self.playlistTrackEmotions[i][1:], emotionsQueryList)
             d[self.playlistTrackEmotions[i][0]] = sim
         ordered_dict = OrderedDict(sorted(d.items(), key=lambda t: t[1]))
-
 
 
     def computeSimilarity(self, v1, v2):
