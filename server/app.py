@@ -7,7 +7,6 @@ import pprint
 app = Flask(__name__)
 app.secret_key = 'some key for session'
 
-domainController = None
 
 # ----------------------- AUTH API PROCEDURE -------------------------
 
@@ -22,14 +21,10 @@ def connect():
     id_playlist = sp_parse.get_current_playlist_from_info(res_playlist)
     print('PLAYLIST:' + id_playlist)
     # STORE SONGS
-    res_songs = sp_calls.get_tracks_from_playlist_call(id_playlist, session['auth_header'])
-    res_info_songs = sp_parse.get_info_tracks(res_songs, session['auth_header'])
-
-    domainController = dc.DomainController(session['auth_header'])
+    domainController.setToken(session['auth_header'])
     domainController.getEmotionPredictionModel()
     domainController.computePlaylistEmotionPrediction(id_playlist)
-
-    return jsonify(res_info_songs)
+    return id_playlist
 
     # GET DEVICE TO CONNECT
     #res = sp_calls.get_available_devices(session['auth_header'])
@@ -44,13 +39,16 @@ def connect():
     # CALL MODEL TRAINING
     # REORDER LIST
 
-
 @app.route("/callback/")
 def callback():
     auth_token = request.args['code']
     auth_header = sp_calls.authorize(auth_token)
     session['auth_header'] = auth_header
     return jsonify(auth_header)
+
+@app.route("/processimage", methods=["GET"])
+def processimage():
+    domainController.processImage()
 
 # -------------------------- API REQUESTS ----------------------------
 
@@ -59,4 +57,5 @@ def index():
     return render_template('template/index.html')
 
 if __name__ == '__main__':
+    domainController = dc.DomainController()
     app.run(debug=True, port=sp_calls.PORT)

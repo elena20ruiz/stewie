@@ -82,9 +82,15 @@ def getModelPredict(model, X):
     return model.predict(X)
 
 def predictTrackEmotion(model, trackJSON):
-    X = matrixFromTracksJSON(trackJSON, trackFeatures)
-    Y = normalize(getModelPredict(model, X)[0].tolist())
+    X = arrayFromTracksJSON(trackJSON, trackFeatures)
+    Y = normalize(getModelPredict(model, [X])[0].tolist())
     return getJSONFromMatrix(Y, emotions)
+
+def arrayFromTracksJSON(trackJSON, attrElements):
+    attributes = []
+    for a in attrElements:
+        attributes.append(trackJSON[a])
+    return attributes
 
 if __name__ == '__main__':
     j = convertTargetInformationToJSON("./TargetTrainingDataSet.txt")
