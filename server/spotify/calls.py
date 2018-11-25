@@ -32,7 +32,7 @@ CLIENT_KEY = '39e30e7a896342a097891f855d004765'
 CLIENT_SIDE_URL = "http://0.0.0.0"
 PORT = 5000
 REDIRECT_URI = "{}:{}/callback/".format(CLIENT_SIDE_URL, PORT)
-SCOPE = "playlist-modify-public playlist-modify-private user-read-recently-played user-top-read"
+SCOPE = "user-read-recently-played user-top-read user-follow-read user-follow-modify user-modify-playback-state user-read-playback-state user-read-currently-playing user-library-read user-library-modify user-read-private user-read-birthdate user-read-email playlist-modify-public playlist-read-collaborative playlist-modify-private playlist-read-private streaming app-remote-control"
 STATE = ""
 SHOW_DIALOG_bool = True
 SHOW_DIALOG_str = str(SHOW_DIALOG_bool).lower()
@@ -88,7 +88,7 @@ def authorize(auth_token):
 
     # use the access token to access Spotify API
     auth_header = {"Authorization": "Bearer {}".format(access_token)}
-    return auth_header
+    return access_token
 
 
 
@@ -113,20 +113,37 @@ def get_list_playlists_call(token):
     url = 'https://api.spotify.com/v1/me/playlists'
     headers  = { 'Authorization': 'Bearer ' + token }
     response = requests.post(url, headers=headers)
-
     return response.text
 
-def get_available_devices(token):
+def get_available_devices(access_token):
     url = "https://api.spotify.com/v1/me/player/devices"
+    headers  = { 'Authorization': 'Bearer ' + access_token }
+    resp = requests.get(url, headers=headers)
+    print(resp.text)
+    return resp.json()
 
-    querystring = {"": ""}
+def change_dispositive(access_token):
+    url = "https://api.spotify.com/v1/me/player/devices"
+    headers  = { 'Authorization': 'Bearer ' + access_token }
+    resp = requests.get(url, headers=headers)
+    print(resp.text)
+    return resp.json()
 
-    payload = ""
-    headers = {
-        'Authorization': "Bearer BQBIFLVNNTMuu9AYDmNKe0OOQHpqB2HYP2aILPBVRwyr9ZQmYcX_rmv3XkFM3vl-S1aa0zKLybEL9XHSp2QwGLoX3s2BWJ8Igh9b9tLCd0qyzVcv4mMw86wRpYF393s-MmIEc60P-7audDvocZMaEJRC_R8",
-        'cache-control': "no-cache",
-        'Postman-Token': "a49d621d-587a-4645-9a8d-2fa4c7e5e954"
+def get_current_playlist(access_token):
+    url = 'https://api.spotify.com/v1/me/player'
+    headers  = { 'Authorization': 'Bearer ' + access_token }
+    resp = requests.get(url, headers=headers)
+    print(resp.text)
+    return resp.json()
+
+def connect_to_device(access_token, device):
+    url = 'https://api.spotify.com/v1/me/player'
+    headers  = { 'Authorization': 'Bearer ' + access_token, 'Content-Type': 'application/json' }
+    device_data = {
+    "device_ids": [
+        device
+        ]
     }
-
-    response = requests.get(url, data = "", headers=headers, params=querystring)
-    print(response.text)
+    resp = requests.put(url, headers=headers, data=device_data)
+    print(resp.text)
+    return resp.json()
