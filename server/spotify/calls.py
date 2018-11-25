@@ -2,7 +2,7 @@ import base64
 import json
 import requests
 import sys
-
+import pprint
 from server import *   #  GET KEYS
 
 # Workaround to support both python 2 & 3
@@ -96,13 +96,14 @@ def authorize(auth_token):
 
 ## FOR FACE RECOGNITION
 def get_tracks_from_playlist_call(id, token):
-    url = 'https://api.spotify.com/v1/playlists/'+ id + '/tracks'
+    print(str(id))
+    url = 'https://api.spotify.com/v1/playlists/'+ str(id) + '/tracks'
     headers  = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json', 'Content-Type': 'application/json' }
     response = requests.get(url, headers=headers )
-    return response.text
+    return response.json()
 
 def get_track_info_call(id,token):
-    url = 'https://api.spotify.com/v1/audio-features?ids=' + id
+    url = 'https://api.spotify.com/v1/audio-features?ids=' + str(id)
     headers  = { 'Authorization': 'Bearer ' + token, 'cache-control': "no-cache", 'Content-type': 'application/json', 'Accept': 'application/json' }
     response = requests.get(url,data='', headers=headers)
     return response.text

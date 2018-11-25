@@ -24,14 +24,14 @@ def get_playlists_tracks(id_playlist,token):
     return result  
 
 # Get info track from list of traks 
-def get_info_tracks(path_tracks, token, data):
+def get_info_tracks(data, token):
     #with open(path_tracks) as f:
     #    data = json.load(f)
     #pprint(data)
-
+    print(data)
     input_ids = ''
-    for track in data["list"]:
-        input_ids += track['id'] + ','
+    for track in data["items"]:
+        input_ids += track['track']['id'] + ','
     input_ids = input_ids[:-1]
     result = calls.get_track_info_call(input_ids, token)
     result_file = {}
@@ -51,8 +51,6 @@ def get_info_tracks(path_tracks, token, data):
             'tempo': item['tempo']
         }
         result_file[item['id']] = res
-    with open(path_tracks, 'w') as outfile:
-        json.dump(result_file, outfile)
     return result_file
 
 # Get info track from list of traks
@@ -86,13 +84,10 @@ def get_id_of_tablet(response):
         return '-1'
 
 def get_current_playlist_from_info(response):
-    uri = response['context']['uri']
+    uri = response['context']['href']
     print('URI:   ' + uri)
-    split_uri = uri.split(':')
-    if(split_uri[3] == 'playlist'):
-        return split_uri[4]
-    else:
-        return '-1'
+    split_uri = uri.split('/')
+    return split_uri[5]
 
 if __name__ == '__main__':
     token = 'BQB2aTNXJDcX1h57iy7Camn8SSIFOP7DN9I3x0s47aEWs2QCq_HtQ9EfS1kTLxlyn0xBdDpeWk1tnEbFOLj1DVfMLHpMUpYs5lyFLmHdtcPvJPT9-vWhjfvg4PUBmEFNgt5fsKs_H1iInAn4X_LOS2A'
