@@ -3,7 +3,8 @@ import os
 
 if __name__ == '__main__':
     while 1:
-        if os.path.exists("token.txt"):
-            img = cv2.imread("imgtmp.jpg")
+        if os.path.exists("../server/token.txt"):
+            img = cv2.imread("../server/imgtmp.jpg")
             cv2.imshow("Emotion recognizer", img)
-            os.remove("token.txt")
+            cv2.waitKey(1)
+            os.remove("../server/token.txt")

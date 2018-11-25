@@ -79,6 +79,7 @@ class DomainController:
         #cv2.waitKey(1)
         cv2.imwrite("imgtmp.jpg", img)
         open("token.txt", 'a').close()
+        return trackIDList
 
     def dict2list(self, dict):
         list = []
@@ -92,7 +93,15 @@ class DomainController:
             sim = self.computeSimilarity(self.playlistTrackEmotions[i][1:], emotionsQueryList)
             d[self.playlistTrackEmotions[i][0]] = sim
         ordered_dict = OrderedDict(sorted(d.items(), key=lambda t: t[1]))
-        return ordered_dict
+        ordered_list = [x for x, y in ordered_dict.items()]
+        ordered_string = ""
+        first = True
+        for e in ordered_list:
+            if first:
+                first = False
+                ordered_string += e
+            ordered_string += "," + e
+        return ordered_string
 
     def computeSimilarity(self, v1, v2):
         sum = 0
