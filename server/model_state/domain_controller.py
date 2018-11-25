@@ -31,9 +31,10 @@ class DomainController:
 
 
 
-    def __init__(self):
+    def __init__(self, token):
+        self.token = token
         #self.getEmotionPredictionModel()
-        cv2.namedWindow(self.camera_window_name)
+        #scv2.namedWindow(self.camera_window_name)
         self.emotionCamera = cv2.VideoCapture(0)
         img = self.get_webcam_image()
         height, width = img.shape[:2]
