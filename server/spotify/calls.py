@@ -148,3 +148,6 @@ def connect_to_device(access_token, device):
     resp = requests.put(url, headers=headers, data=device_data)
     print(resp.text)
     return resp.json()
+
+def reorder_playlist(id_playlist, list_tracks, token):
+    url = 'https://api.spotify.com/v1/me/player'

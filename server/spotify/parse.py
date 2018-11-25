@@ -89,9 +89,3 @@ def get_current_playlist_from_info(response):
     split_uri = uri.split('/')
     return split_uri[5]
 
-if __name__ == '__main__':
-    token = 'BQB2aTNXJDcX1h57iy7Camn8SSIFOP7DN9I3x0s47aEWs2QCq_HtQ9EfS1kTLxlyn0xBdDpeWk1tnEbFOLj1DVfMLHpMUpYs5lyFLmHdtcPvJPT9-vWhjfvg4PUBmEFNgt5fsKs_H1iInAn4X_LOS2A'
-    path_tracks = 'server/stewie/spotify_api/songs_copy.json'
-    id_s = '1byvBifDJy7tqBrMJQgFZ1'
-    data = get_playlists_tracks(id_s,token)
-    get_info_tracks(path_tracks,token,data)
