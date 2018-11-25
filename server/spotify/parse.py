@@ -11,7 +11,7 @@ def get_playlists(token):
 # Return for each track id + name
 def get_playlists_tracks(id_playlist,token):
     data = calls.get_tracks_from_playlist_call(id_playlist, token)
-    d = json.loads(data)
+    d = data
     result = { 'list' : [] }
     for item in d['items']:
         track = {
@@ -25,13 +25,10 @@ def get_playlists_tracks(id_playlist,token):
 
 # Get info track from list of traks 
 def get_info_tracks(data, token):
-    #with open(path_tracks) as f:
-    #    data = json.load(f)
-    #pprint(data)
     print(data)
     input_ids = ''
-    for track in data["items"]:
-        input_ids += track['track']['id'] + ','
+    for track in data["list"]:
+        input_ids += track['id'] + ','
     input_ids = input_ids[:-1]
     result = calls.get_track_info_call(input_ids, token)
     result_file = {}

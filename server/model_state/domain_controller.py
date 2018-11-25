@@ -29,18 +29,16 @@ class DomainController:
     cameraHeight = None
     TMP_IMG_PATH = "tmpimg.jpg"
 
-
-
-    def __init__(self, token):
-        self.token = token
+    def __init__(self):
         #self.getEmotionPredictionModel()
-        #scv2.namedWindow(self.camera_window_name)
         self.emotionCamera = cv2.VideoCapture(0)
         img = self.get_webcam_image()
         height, width = img.shape[:2]
         self.cameraHeight = 300
         self.cameraWidth = self.cameraHeight * (width/height)
 
+    def setToken(self, token):
+        self.token = token
 
     def getTrackEmotionPrediction(self, id, model):
         trackJSON = sc.get_info_track(id, self.token)
@@ -48,8 +46,7 @@ class DomainController:
 
     def getEmotionPredictionModel(self):
         data = sc.get_playlists_tracks(self.TRAINING_PLAYLIST_ID, self.token)
-        sc.get_info_tracks(self.TRAINING_PATH + self.TRAINING_FEATURES_JSON, self.token, data)
-        json_features_data = mt.getTrackJSONFromPath(self.TRAINING_PATH, self.TRAINING_FEATURES_JSON)
+        json_features_data = sc.get_info_tracks(data, self.token)
 
         json_target_data = mt.convertTargetInformationToJSON(self.TRAINING_PATH + self.TRAINING_SET_FILE)
         mt.saveJSONToPath(self.TRAINING_PATH, self.TRAINING_TARGET_JSON, json_target_data)
@@ -59,13 +56,10 @@ class DomainController:
 
 
     def computePlaylistEmotionPrediction(self, playlistID):
-        id = sc.get_user_playlistID(self.token)
-        if id is None:
-            print("User doesn't have an active playlist!")
-        data = sc.get_playlists_tracks(self.TRAINING_PLAYLIST_ID, self.token)
-        sc.get_info_tracks(self.TRAINING_PATH + self.TRAINING_FEATURES_JSON, self.token, data)
-        json_features_data = mt.getTrackJSONFromPath(self.TRAINING_PATH, self.TRAINING_FEATURES_JSON)
-        for id, value in json_features_data:
+        self.playlistTrackEmotions = []
+        res_songs = sc.get_playlists_tracks(playlistID, self.token)
+        json_features_data = sc.get_info_tracks(res_songs, self.token)
+        for id, value in json_features_data.items():
             Y = mt.predictTrackEmotion(self.model, value)
             aux = [id]
             aux = aux + self.dict2list(Y)
@@ -73,7 +67,7 @@ class DomainController:
 
     def processImage(self):
         img = self.get_webcam_image()
-        img = cv2.resize(img, (int(DC.cameraWidth), int(DC.cameraHeight)))
+        img = cv2.resize(img, (int(self.cameraWidth), int(self.cameraHeight)))
         cv2.imwrite(self.TMP_IMG_PATH, img)
         response = emotion.get_image_emotion(self.TMP_IMG_PATH)
         if len(response) != 0:
@@ -81,8 +75,10 @@ class DomainController:
             emotionsQueryDict = response[0]["faceAttributes"]["emotion"]
             emotionsQueryList = self.dict2list(emotionsQueryDict)
             trackIDList = self.updatePlaylistOrder(emotionsQueryList)
-        self.set_webcam_image(img)
-        cv2.waitKey(1)
+        #self.set_webcam_image(img)
+        #cv2.waitKey(1)
+        cv2.imwrite("imgtmp.jpg", img)
+        open("token.txt", 'a').close()
 
     def dict2list(self, dict):
         list = []
@@ -96,7 +92,7 @@ class DomainController:
             sim = self.computeSimilarity(self.playlistTrackEmotions[i][1:], emotionsQueryList)
             d[self.playlistTrackEmotions[i][0]] = sim
         ordered_dict = OrderedDict(sorted(d.items(), key=lambda t: t[1]))
-
+        return ordered_dict
 
     def computeSimilarity(self, v1, v2):
         sum = 0

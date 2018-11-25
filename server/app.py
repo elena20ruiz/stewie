@@ -7,7 +7,7 @@ import pprint
 app = Flask(__name__)
 app.secret_key = 'some key for session'
 
-domainController = None
+main_playlist = ''
 
 # ----------------------- AUTH API PROCEDURE -------------------------
 
@@ -20,16 +20,13 @@ def connect():
     # GET PLAYLIST
     res_playlist = sp_calls.get_current_playlist(session['auth_header'])
     id_playlist = sp_parse.get_current_playlist_from_info(res_playlist)
+    main_playlist = id_playlist
     print('PLAYLIST:' + id_playlist)
     # STORE SONGS
-    res_songs = sp_calls.get_tracks_from_playlist_call(id_playlist, session['auth_header'])
-    res_info_songs = sp_parse.get_info_tracks(res_songs, session['auth_header'])
-
-    domainController = dc.DomainController(session['auth_header'])
+    domainController.setToken(session['auth_header'])
     domainController.getEmotionPredictionModel()
     domainController.computePlaylistEmotionPrediction(id_playlist)
-
-    return jsonify(res_info_songs)
+    return id_playlist
 
     # GET DEVICE TO CONNECT
     #res = sp_calls.get_available_devices(session['auth_header'])
@@ -47,9 +44,7 @@ def connect():
 
 @app.route("/list_playlist")
 def list_playlist():
-    res_playlist = sp_calls.get_current_playlist(session['auth_header'])
-    id_playlist = sp_parse.get_current_playlist_from_info(res_playlist)
-    res_songs = sp_calls.get_tracks_from_playlist_call(id_playlist, session['auth_header'])
+    res_songs = sp_calls.get_tracks_from_playlist_call(main_playlist, session['auth_header'])
     return jsonify(sp_parse.get_list_songs_orders(res_songs))
 
 @app.route("/callback/")
@@ -59,6 +54,10 @@ def callback():
     session['auth_header'] = auth_header
     return jsonify(auth_header)
 
+@app.route("/processimage", methods=["GET"])
+def processimage():
+    domainController.processImage()
+
 # -------------------------- API REQUESTS ----------------------------
 
 @app.route("/")
@@ -66,4 +65,5 @@ def index():
     return render_template('template/index.html')
 
 if __name__ == '__main__':
+    domainController = dc.DomainController()
     app.run(debug=True, port=sp_calls.PORT)
