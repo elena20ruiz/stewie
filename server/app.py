@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'some key for session'
 
 main_playlist = ''
-
+domainController = dc.DomainController()
 # ----------------------- AUTH API PROCEDURE -------------------------
 
 @app.route("/auth")
@@ -44,8 +44,17 @@ def connect():
 
 @app.route("/list_playlist")
 def list_playlist():
-    res_songs = sp_calls.get_tracks_from_playlist_call(main_playlist, session['auth_header'])
-    return jsonify(sp_parse.get_list_songs_orders(res_songs))
+    #list_tracks = domainController.processImage()
+    list_tracks = '69GGBxA162lTqCwzJG5jLp'
+    res_playlist = sp_calls.get_current_playlist(session['auth_header'])
+    id_playlist = sp_parse.get_current_playlist_from_info(res_playlist)
+    sp_calls.reorder_playlist(id_playlist, list_tracks, session['auth_header'])
+    song = sp_calls.get_current_track(session['auth_header'])
+    response = {
+        'name': song['item']['name'],
+        'artist': song['item']['album']['artists'][0]['name']
+    }
+    return jsonify(response)
 
 @app.route("/callback/")
 def callback():
@@ -54,9 +63,6 @@ def callback():
     session['auth_header'] = auth_header
     return jsonify(auth_header)
 
-@app.route("/processimage", methods=["GET"])
-def processimage():
-    return domainController.processImage()
 
 
 # -------------------------- API REQUESTS ----------------------------
@@ -66,5 +72,4 @@ def index():
     return render_template('template/index.html')
 
 if __name__ == '__main__':
-    domainController = dc.DomainController()
     app.run(debug=True, port=sp_calls.PORT)
