@@ -71,7 +71,6 @@ def authorize(auth_token):
         "code": str(auth_token),
         "redirect_uri": REDIRECT_URI
     }
-    print('hi')
     #python 3 or above
     if sys.version_info[0] >= 3:
         base64encoded = base64.b64encode(("{}:{}".format(CLIENT_ID, CLIENT_KEY)).encode())
@@ -82,7 +81,6 @@ def authorize(auth_token):
 
     post_request = requests.post(SPOTIFY_TOKEN_URL, data=code_payload,
                                  headers=headers)
-    print('h3')
     # tokens are returned to the app
     response_data = json.loads(post_request.text)
     if "access_token" in response_data:
@@ -124,28 +122,24 @@ def get_available_devices(access_token):
     url = "https://api.spotify.com/v1/me/player/devices"
     headers  = { 'Authorization': 'Bearer ' + access_token }
     resp = requests.get(url, headers=headers)
-    print(resp.text)
     return resp.json()
 
 def change_dispositive(access_token):
     url = "https://api.spotify.com/v1/me/player/devices"
     headers  = { 'Authorization': 'Bearer ' + access_token }
     resp = requests.get(url, headers=headers)
-    print(resp.text)
     return resp.json()
 
 def get_current_playlist(access_token):
     url = 'https://api.spotify.com/v1/me/player'
     headers  = { 'Authorization': 'Bearer ' + access_token }
     resp = requests.get(url, headers=headers)
-    print(resp.text)
     return resp.json()
 
 def get_current_track(access_token):
     url = 'https://api.spotify.com/v1/me/player/currently-playing'
     headers  = { 'Authorization': 'Bearer ' + access_token }
     resp = requests.get(url, headers=headers)
-    print(resp.text)
     return resp.json()
 
 def connect_to_device(access_token, device):
@@ -157,7 +151,6 @@ def connect_to_device(access_token, device):
         ]
     }
     resp = requests.put(url, headers=headers, data=device_data)
-    print(resp.text)
     return resp.json()
 
 
@@ -192,15 +185,16 @@ def reorder_playlist(playlist_id, tracks, token):
     pos = 0
     for original in current_position['items']:
         if item == original['track']['id']:
+            print(original['track']['name'])
             break
         else: 
             pos += 1
+    print(current_position['items'][pos]['track']['name'])
     body = {
         "range_start": pos,
         "range_length": 1,
         "insert_before": 1
     }
-    print(body)
     url = 'https://api.spotify.com/v1/playlists/'+ playlist_id + '/tracks'
     headers  = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
     resp = requests.put(url, headers=headers, data=body)

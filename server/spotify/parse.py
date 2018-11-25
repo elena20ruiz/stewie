@@ -29,7 +29,6 @@ def get_playlists_tracks(id_playlist, token):
 
 
 def get_info_tracks(data, token):
-    print(data)
     input_ids = ''
     for track in data["list"]:
         input_ids += track['id'] + ','
