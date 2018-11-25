@@ -48,7 +48,8 @@ def callback():
 
 @app.route("/processimage", methods=["GET"])
 def processimage():
-    domainController.processImage()
+    return domainController.processImage()
+
 
 # -------------------------- API REQUESTS ----------------------------
 
