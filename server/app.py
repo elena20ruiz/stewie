@@ -25,7 +25,7 @@ def connect():
     res_songs = sp_calls.get_tracks_from_playlist_call(id_playlist, session['auth_header'])
     res_info_songs = sp_parse.get_info_tracks(res_songs, session['auth_header'])
 
-    domainController = dc.DomainController()
+    domainController = dc.DomainController(session['auth_header'])
     domainController.getEmotionPredictionModel()
     domainController.computePlaylistEmotionPrediction(id_playlist)
 
