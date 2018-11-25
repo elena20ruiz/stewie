@@ -50,6 +50,20 @@ def callback():
 def processimage():
     return domainController.processImage()
 
+@app.route("/pausesong", methods=["GET"])
+def pausesong():
+    domainController.pauseSong()
+    return "OK"
+
+@app.route("/playsong", methods=["GET"])
+def playsong():
+    domainController.playSong()
+    return "OK"
+
+@app.route("/nextsong", methods=["GET"])
+def nextsong():
+    domainController.nextSong()
+    return "OK"
 
 # -------------------------- API REQUESTS ----------------------------
 
@@ -59,4 +73,4 @@ def index():
 
 if __name__ == '__main__':
     domainController = dc.DomainController()
-    app.run(debug=True, port=sp_calls.PORT)
+    app.run(debug=True, host="0.0.0.0",port=sp_calls.PORT)

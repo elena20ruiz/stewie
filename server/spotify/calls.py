@@ -30,7 +30,7 @@ CLIENT_KEY = '39e30e7a896342a097891f855d004765'
 # server side parameter
 # * fell free to change it if you want to, but make sure to change in
 # your spotify dev account as well *
-CLIENT_SIDE_URL = "http://127.0.0.1"
+CLIENT_SIDE_URL = "http://0.0.0.0"
 PORT = 5000
 REDIRECT_URI = "{}:{}/callback/".format(CLIENT_SIDE_URL, PORT)
 SCOPE = "user-read-recently-played user-top-read user-follow-read user-follow-modify user-modify-playback-state user-read-playback-state user-read-currently-playing user-library-read user-library-modify user-read-private user-read-birthdate user-read-email playlist-modify-public playlist-read-collaborative playlist-modify-private playlist-read-private streaming app-remote-control"
@@ -152,3 +152,27 @@ def connect_to_device(access_token, device):
     resp = requests.put(url, headers=headers, data=device_data)
     print(resp.text)
     return resp.json()
+
+def pause_song_call(access_token):
+    url = "https://api.spotify.com/v1/me/player/pause"
+
+    headers = {'Authorization': 'Bearer ' + access_token,
+               'cache-control': "no-cache",
+    }
+    response = requests.request("PUT", url, headers=headers)
+
+def play_song_call(access_token, device_id):
+    url = "https://api.spotify.com/v1/me/player/play"
+    querystring = {"device_id": device_id}
+    headers = {'Authorization': 'Bearer ' + access_token,
+               'cache-control': "no-cache",
+    }
+    response = requests.request("PUT", url, headers=headers, params = querystring)
+
+def next_song_call(access_token, device_id):
+    url = "https://api.spotify.com/v1/me/player/next"
+    querystring = {"device_id": device_id}
+    headers = {'Authorization': 'Bearer ' + access_token,
+               'cache-control': "no-cache",
+    }
+    response = requests.request("POST", url, headers=headers, params=querystring)

@@ -21,6 +21,7 @@ class DomainController:
     TRAINING_PATH = "model_training/"
     USER_PLAYLIST_ID = '574wL0I3ntRPvVVyNHriFK'
     TRAINING_PLAYLIST_ID = '1byvBifDJy7tqBrMJQgFZ1'
+    DEVICE_ID = 'edbbf6dfa3678059cbf7252b056cc9c314126be6'
     playlistID = None
     playlistTrackEmotions = None
     camera_window_name = "Emotion recognizer"
@@ -124,6 +125,14 @@ class DomainController:
     def destroy_camera(self):
         cv2.destroyWindow(self.camera_window_name)
 
+    def playSong(self):
+        sc.playSong(self.token, self.DEVICE_ID)
+
+    def pauseSong(self):
+        sc.pauseSong(self.token)
+
+    def nextSong(self):
+        sc.nextNong(self.token, self.DEVICE_ID)
 
 # user-read-recently-played user-top-read user-follow-read user-follow-modify user-modify-playback-state user-read-playback-state user-read-currently-playing user-library-read user-library-modify user-read-private user-read-birthdate user-read-email playlist-modify-public playlist-read-collaborative playlist-modify-private playlist-read-private streaming app-remote-control
 if __name__ == '__main__':
