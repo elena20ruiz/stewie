@@ -4,26 +4,30 @@ from pprint import pprint
 from server.spotify import calls
 
 
-#TODO: Generate API Call in order to get all user playlists
+# TODO: Generate API Call in order to get all user playlists
 def get_playlists(token):
     pass
 
 # Return for each track id + name
-def get_playlists_tracks(id_playlist,token):
+
+
+def get_playlists_tracks(id_playlist, token):
     data = calls.get_tracks_from_playlist_call(id_playlist, token)
     d = data
-    result = { 'list' : [] }
+    result = {'list': []}
     for item in d['items']:
         track = {
             'id': item['track']['id'],
             'name': item['track']['name']
         }
         result['list'].append(track)
-    #with open('server/stewie/calls_api/songs.json', 'w') as outfile:  
+    # with open('server/stewie/calls_api/songs.json', 'w') as outfile:
     #   json.dump(result, outfile)
-    return result  
+    return result
 
-# Get info track from list of traks 
+# Get info track from list of traks
+
+
 def get_info_tracks(data, token):
     print(data)
     input_ids = ''
@@ -51,6 +55,8 @@ def get_info_tracks(data, token):
     return result_file
 
 # Get info track from list of traks
+
+
 def get_info_track(track_id, token):
     result = calls.get_track_info_call(track_id, token)
     result_file = {}
@@ -72,13 +78,16 @@ def get_info_track(track_id, token):
         result_file[item['id']] = res
     return result_file
 
-# Get id of tablet device 
+# Get id of tablet device
+
+
 def get_id_of_tablet(response):
     for device in response['devices']:
         if device['type'] == 'Smartphone':
             return device['id']
     else:
         return '-1'
+
 
 def get_current_playlist_from_info(response):
     uri = response['context']['href']

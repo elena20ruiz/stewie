@@ -7,7 +7,7 @@ import pprint
 app = Flask(__name__)
 app.secret_key = 'some key for session'
 
-
+main_playlist = ''
 # ----------------------- AUTH API PROCEDURE -------------------------
 
 @app.route("/auth")
@@ -19,6 +19,7 @@ def connect():
     # GET PLAYLIST
     res_playlist = sp_calls.get_current_playlist(session['auth_header'])
     id_playlist = sp_parse.get_current_playlist_from_info(res_playlist)
+    main_playlist = id_playlist
     print('PLAYLIST:' + id_playlist)
     # STORE SONGS
     domainController.setToken(session['auth_header'])
@@ -39,6 +40,20 @@ def connect():
     # CALL MODEL TRAINING
     # REORDER LIST
 
+
+@app.route("/list_playlist")
+def list_playlist():
+    list_tracks = domainController.processImage()
+    res_playlist = sp_calls.get_current_playlist(session['auth_header'])
+    id_playlist = sp_parse.get_current_playlist_from_info(res_playlist)
+    sp_calls.reorder_playlist(id_playlist, list_tracks, session['auth_header'])
+    song = sp_calls.get_current_track(session['auth_header'])
+    response = {
+        'name': song['item']['name'],
+        'artist': song['item']['album']['artists'][0]['name']
+    }
+    return jsonify(response)
+
 @app.route("/callback/")
 def callback():
     auth_token = request.args['code']
@@ -46,9 +61,6 @@ def callback():
     session['auth_header'] = auth_header
     return jsonify(auth_header)
 
-@app.route("/processimage", methods=["GET"])
-def processimage():
-    return domainController.processImage()
 
 @app.route("/pausesong", methods=["GET"])
 def pausesong():

@@ -141,6 +141,13 @@ def get_current_playlist(access_token):
     print(resp.text)
     return resp.json()
 
+def get_current_track(access_token):
+    url = 'https://api.spotify.com/v1/me/player/currently-playing'
+    headers  = { 'Authorization': 'Bearer ' + access_token }
+    resp = requests.get(url, headers=headers)
+    print(resp.text)
+    return resp.json()
+
 def connect_to_device(access_token, device):
     url = 'https://api.spotify.com/v1/me/player'
     headers  = { 'Authorization': 'Bearer ' + access_token, 'Content-Type': 'application/json' }
@@ -152,6 +159,7 @@ def connect_to_device(access_token, device):
     resp = requests.put(url, headers=headers, data=device_data)
     print(resp.text)
     return resp.json()
+
 
 def pause_song_call(access_token):
     url = "https://api.spotify.com/v1/me/player/pause"
@@ -176,3 +184,24 @@ def next_song_call(access_token, device_id):
                'cache-control': "no-cache",
     }
     response = requests.request("POST", url, headers=headers, params=querystring)
+
+def reorder_playlist(playlist_id, tracks, token):
+    current_position = get_tracks_from_playlist_call(playlist_id,token)
+    list_tracks = tracks.split(',')
+    item = list_tracks[0]
+    pos = 0
+    for original in current_position['items']:
+        if item == original['track']['id']:
+            break
+        else: 
+            pos += 1
+    body = {
+        "range_start": pos,
+        "range_length": 1,
+        "insert_before": 1
+    }
+    print(body)
+    url = 'https://api.spotify.com/v1/playlists/'+ playlist_id + '/tracks'
+    headers  = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
+    resp = requests.put(url, headers=headers, data=body)
+    return current_position['items'][0]['track']
